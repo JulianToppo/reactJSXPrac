@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import Card from '../UI/Card';
 import Button from '../UI/Button';
@@ -6,13 +6,15 @@ import ErrorModal from '../UI/ErrorModal';
 import classes from './AddUser.module.css';
 
 const AddUser = (props) => {
+  const collegeRef=useRef();
   const [enteredUsername, setEnteredUsername] = useState('');
   const [enteredAge, setEnteredAge] = useState('');
   const [error, setError] = useState();
 
   const addUserHandler = (event) => {
     event.preventDefault();
-    if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+    let collegeValue=collegeRef.current.value;
+    if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0 || collegeValue.trim().length === 0) {
       setError({
         title: 'Invalid input',
         message: 'Please enter a valid name and age (non-empty values).',
@@ -26,9 +28,10 @@ const AddUser = (props) => {
       });
       return;
     }
-    props.onAddUser(enteredUsername, enteredAge);
+    props.onAddUser(enteredUsername, enteredAge, collegeValue);
     setEnteredUsername('');
     setEnteredAge('');
+    collegeRef.current.value='';
   };
 
   const usernameChangeHandler = (event) => {
@@ -67,6 +70,12 @@ const AddUser = (props) => {
             type="number"
             value={enteredAge}
             onChange={ageChangeHandler}
+          />
+          <label htmlFor="collegName">College Name:</label>
+          <input
+            id="collegeName"
+            type="text"
+            ref={collegeRef}
           />
           <Button type="submit">Add User</Button>
         </form>
